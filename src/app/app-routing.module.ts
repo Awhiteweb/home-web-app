@@ -13,7 +13,7 @@ import { TablesComponent } from "./views/admin/tables/tables.component";
 
 // auth views
 import { LoginComponent } from "./views/auth/login/login.component";
-import { RegisterComponent } from "./views/auth/register/register.component";
+import { ResetPasswordComponent } from "./views/auth/reset-password/reset-password.component";
 
 // no layouts views
 import { IndexComponent } from "./views/index/index.component";
@@ -39,7 +39,7 @@ const routes: Routes = [
     component: AuthComponent,
     children: [
       { path: "login", component: LoginComponent },
-      { path: "register", component: RegisterComponent },
+      { path: "reset", component: ResetPasswordComponent },
       { path: "", redirectTo: "login", pathMatch: "full" },
     ],
   },
