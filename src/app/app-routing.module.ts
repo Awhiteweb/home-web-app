@@ -11,10 +11,6 @@ import { MapsComponent } from "./views/admin/maps/maps.component";
 import { SettingsComponent } from "./views/admin/settings/settings.component";
 import { TablesComponent } from "./views/admin/tables/tables.component";
 
-// auth views
-import { LoginComponent } from "./views/auth/login/login.component";
-import { ResetPasswordComponent } from "./views/auth/reset-password/reset-password.component";
-
 // no layouts views
 import { IndexComponent } from "./views/index/index.component";
 import { LandingComponent } from "./views/landing/landing.component";
@@ -36,12 +32,7 @@ const routes: Routes = [
   // auth views
   {
     path: "auth",
-    component: AuthComponent,
-    children: [
-      { path: "login", component: LoginComponent },
-      { path: "reset", component: ResetPasswordComponent },
-      { path: "", redirectTo: "login", pathMatch: "full" },
-    ],
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   // no layout views
   { path: "profile", component: ProfileComponent },
