@@ -1,0 +1,31 @@
+<a class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+  href="#pablo" (click)="toggleDropdown($event)" #btnDropdownRef>
+  Pages
+</a>
+<div class="bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
+  [ngClass]="dropdownPopoverShow ? 'block' : 'hidden'" #popoverDropdownRef>
+  <a [routerLink]="['/home/dashboard']"
+    class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
+    Dashboard
+  </a>
+  <a [routerLink]="['/home/menu']"
+    class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
+    Menu
+  </a>
+  <a [routerLink]="['/home/tides']"
+    class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
+    Tides
+  </a>
+  <a [routerLink]="['/home/metrics']"
+    class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
+    Metrics
+  </a>
+  <div class="h-0 mx-4 my-2 border border-solid border-blueGray-100"></div>
+  <span class="text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-blueGray-400">
+    Auth
+  </span>
+  <a [routerLink]="['/auth/reset']"
+    class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700">
+    Reset Password
+  </a>
+</div>

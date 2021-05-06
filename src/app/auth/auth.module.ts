@@ -1,18 +1,18 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
-import { RouterModule, Routes } from "@angular/router";
-import { LoginComponent } from "./login/login.component";
-import { ResetPasswordComponent } from "./reset-password/reset-password.component";
+import {CommonModule} from "@angular/common";
+import {NgModule} from "@angular/core";
+import {ReactiveFormsModule} from "@angular/forms";
+import {RouterModule, Routes} from "@angular/router";
+import {LoginComponent} from "./login/login.component";
+import {ResetPasswordComponent} from "./reset-password/reset-password.component";
 
 const routes: Routes = [
-    { 
-        path: "login", 
-        component: LoginComponent 
+    {
+        path: "login",
+        component: LoginComponent
     },
-    { 
-        path: "reset", 
-        component: ResetPasswordComponent 
+    {
+        path: "reset",
+        component: ResetPasswordComponent
     }
 ];
 
@@ -21,11 +21,11 @@ const routes: Routes = [
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        RouterModule.forChild( routes )
+        RouterModule.forChild(routes)
     ],
     declarations: [
         LoginComponent,
         ResetPasswordComponent
     ]
 })
-export class AuthModule {}
+export class AuthModule { }

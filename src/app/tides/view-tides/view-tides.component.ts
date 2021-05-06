@@ -1,18 +1,95 @@
-import { AfterViewInit, Component, OnInit } from "@angular/core";
+import {AfterViewInit, Component, OnDestroy, OnInit} from "@angular/core";
 import Chart from "chart.js";
+import {map} from "rxjs/operators";
+import {format, isBefore, addHours} from "date-fns";
+
+import {ILineChartConfig} from "../../shared/card-line-chart/line-chart.model";
+import {Tides, ITide} from "../tides.model";
+import {TidesService} from "../tides.services";
+import {Subscription} from "rxjs";
+
+interface DisplayData {
+    x: string,
+    y: number
+}
+
+interface DataBuilder {
+    yAxis?: number[];
+    xAxis?: string[];
+    tides?: Tides;
+    displayData?: DisplayData[];
+}
 
 @Component({
     selector: 'app-view-tides',
     templateUrl: './view-tides.component.html'
 })
-export class ViewTidesComponent implements OnInit, AfterViewInit {
+export class ViewTidesComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    constructor() { }
+    private tideSubscription$: Subscription | null = null;
+    private xFormat = "dd/mm HH";
 
-    ngOnInit() { }
+    constructor(private tidesService: TidesService) { }
 
-    ngAfterViewInit() {}
-    
+    ngOnDestroy(): void {
+        this.tideSubscription$?.unsubscribe();
+    }
+
+    ngOnInit() {
+        this.tideSubscription$ = this.tidesService.tides$.pipe(
+            map((value: Tides) => value.sort((a: ITide, b: ITide) =>
+                isBefore(a.dateTime, b.dateTime) ? -1 : 1)),
+            map((value: Tides): DataBuilder => ({
+                yAxis: this.yAxisLabels(value.map(x => x.height).sort((a,b) => a-b)),
+                tides: value
+            })),
+            map((value: DataBuilder): DataBuilder => ({
+                yAxis: value.yAxis,
+                xAxis: this.xAxisLabels(value.tides.map(x => x.dateTime)),
+                tides: value.tides
+            })),
+            map((value: DataBuilder): DataBuilder => ({
+                yAxis: value.yAxis,
+                xAxis: value.xAxis,
+                displayData: value.tides.map((tide: ITide): DisplayData => ({
+                    // test rounding to nearest hour
+                    x: format(tide.dateTime, this.xFormat),
+                    y: tide.height
+                }))
+            })),
+        ).subscribe((data) => {
+            //add data to default chart options
+            //create function with dataset as input and add to defaults
+            //function should create yaxis labels for the given height range
+            //function should create xaxis labels for the given date range
+        });
+    }
+
+    ngAfterViewInit() {
+        this.loadChart();
+    }
+
+    private yAxisLabels(dataset: number[]): number[] {
+        const axis = [];
+        let start = Math.floor(dataset[0]);
+        const end = Math.ceil(dataset[dataset.length - 1]);
+        while(start <= end) {
+            axis.push(start);
+            start += 0.5;
+        }
+        return axis;
+    }
+
+    private xAxisLabels(dataset: Date[]): string[] {
+        const axis = [];
+        let current = dataset[0];
+        do {
+            axis.push(format(current, this.xFormat));
+            current = addHours(current, 1);
+        } while(isBefore(current, dataset[dataset.length -1]));
+        return axis;
+    }
+
     private loadChart() {
         var config = {
             type: "line",
@@ -28,7 +105,7 @@ export class ViewTidesComponent implements OnInit, AfterViewInit {
                 ],
                 datasets: [
                     {
-                        label: new Date().getFullYear(),
+                        label: `${new Date().getFullYear()}`,
                         backgroundColor: "#4c51bf",
                         borderColor: "#4c51bf",
                         data: [65, 78, 66, 44, 56, 67, 75],
@@ -107,6 +184,10 @@ export class ViewTidesComponent implements OnInit, AfterViewInit {
                 },
             },
         };
+        this.setChartData(config);
+    }
+
+    setChartData(config: ILineChartConfig) {
         let ctx: any = document.getElementById("line-chart") as HTMLCanvasElement;
         ctx = ctx.getContext("2d");
         new Chart(ctx, config);

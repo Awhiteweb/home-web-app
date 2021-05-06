@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { ApiService } from "../services/api.service";
-import { IServerResponse, Tides } from "./tides.entites";
+import { IServerResponse, Tides } from "./tides.model";
 import { isSameDay } from 'date-fns';
 
 export class TidesService {
