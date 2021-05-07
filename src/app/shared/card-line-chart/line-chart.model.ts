@@ -16,15 +16,18 @@ export interface IDataset {
     data: DatasetData;
     parsing?: IParsing;
     fill?: boolean;
+    tension?: number
 }
 
 export interface IParsing {
     yAxisKey: string
 }
 
-export type DatasetData = number[] | IDatasetDataCustom;
-
 /**
+ * Dataset data can be either a number array
+ * 
+ * or 
+ * 
  * Custom data object
  * 
  * The object can contain be a simple x,y object that doesn't need any parsing parameters
@@ -35,9 +38,7 @@ export type DatasetData = number[] | IDatasetDataCustom;
  * 
  * ```{x: string, [key: string]: number}```
  */
-export interface IDatasetDataCustom {
-    x: string;
-}
+export type DatasetData = number[] | any;
 
 export interface IOptions {
     maintainAspectRatio?: boolean;

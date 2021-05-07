@@ -6,7 +6,7 @@ import {format, isBefore, addHours} from "date-fns";
 import {ILineChartConfig} from "../../shared/card-line-chart/line-chart.model";
 import {Tides, ITide} from "../tides.model";
 import {TidesService} from "../tides.services";
-import {Subscription} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
 
 interface DisplayData {
     x: string,
@@ -26,8 +26,10 @@ interface DataBuilder {
 })
 export class ViewTidesComponent implements OnInit, AfterViewInit, OnDestroy {
 
+    isChartReady$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private tideSubscription$: Subscription | null = null;
     private xFormat = "dd/mm HH";
+    config: any;
 
     constructor(private tidesService: TidesService) { }
 
@@ -36,6 +38,9 @@ export class ViewTidesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
+    }
+    
+    ngAfterViewInit() {
         this.tideSubscription$ = this.tidesService.tides$.pipe(
             map((value: Tides) => value.sort((a: ITide, b: ITide) =>
                 isBefore(a.dateTime, b.dateTime) ? -1 : 1)),
@@ -62,11 +67,11 @@ export class ViewTidesComponent implements OnInit, AfterViewInit, OnDestroy {
             //create function with dataset as input and add to defaults
             //function should create yaxis labels for the given height range
             //function should create xaxis labels for the given date range
+            const config = this.buildChartConfig(data);
+            this.setChartData(config);
+            this.isChartReady$.next(true);
         });
-    }
-
-    ngAfterViewInit() {
-        this.loadChart();
+        // this.loadChart();
     }
 
     private yAxisLabels(dataset: number[]): number[] {
@@ -88,6 +93,57 @@ export class ViewTidesComponent implements OnInit, AfterViewInit, OnDestroy {
             current = addHours(current, 1);
         } while(isBefore(current, dataset[dataset.length -1]));
         return axis;
+    }
+
+    private buildChartConfig(value: DataBuilder): ILineChartConfig {
+        const config: ILineChartConfig = {
+            type: "line",
+            data: {
+                labels: value.xAxis,
+                datasets: [
+                    {
+                        data: value.displayData,
+                        label: "Tides",
+                        tension: 0.9
+                    }
+                ],
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: "Tide Chart",
+                    fontColor: "white",
+                },
+                tooltips: {
+                    mode: "index",
+                    intersect: false,
+                },
+                hover: {
+                    mode: "nearest",
+                    intersect: true,
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            display: true,
+                            ticks: {
+                                fontColor: "rgba(255,255,255,.7)",
+                            },
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            display: true,
+                            ticks: {
+                                fontColor: "rgba(255,255,255,.7)",
+                            },
+                        }
+                    ]
+                }
+            }
+        };
+        return config;
     }
 
     private loadChart() {
