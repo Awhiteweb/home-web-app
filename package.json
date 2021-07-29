@@ -8,10 +8,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "prod": "NODE_ENV=production ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:tailwind": "tailwind build src/assets/styles/index.css -o src/assets/styles/tailwind.css",
+    "build:tailwind": "NODE_ENV=production tailwind build src/assets/styles/index.css -o src/assets/styles/tailwind.css",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm start"
   },
   "dependencies": {
