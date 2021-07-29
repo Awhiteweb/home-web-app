@@ -1,5 +1,5 @@
 {
-  "name": "metrics-dashboard",
+  "name": "coutts-white-home",
   "version": "1.1.0",
   "description": "Notus Angular - Free Tailwind CSS UI Kit and Admin by Creative Tim.",
   "repository": "https://github.com/creativetimofficial/notus-angular",
@@ -28,6 +28,7 @@
     "@tailwindcss/forms": "0.2.1",
     "amazon-cognito-identity-js": "^4.6.0",
     "chart.js": "2.9.4",
+    "date-fns": "^2.23.0",
     "rxjs": "6.6.6",
     "tailwindcss": "2.0.4",
     "tslib": "2.1.0",
