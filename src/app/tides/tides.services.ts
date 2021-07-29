@@ -8,7 +8,7 @@ import {ITideLocationServerResponse, ITideServerResponse, TideLocations, Tides} 
 // import {TidesModule} from './tides.module';
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'any'
 })
 export class TidesService {
 

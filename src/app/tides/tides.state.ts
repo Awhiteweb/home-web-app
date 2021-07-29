@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject, combineLatest, Observable} from "rxjs";
-import {filter, map, switchMap, tap} from "rxjs/operators";
+import {map, tap} from "rxjs/operators";
 import {environment} from "src/environments/environment";
 import {TideLocations, Tides} from "./tides.entites";
 // import {TidesModule} from "./tides.module";
@@ -11,7 +11,7 @@ interface ITideState {
 }
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'any'
 })
 export class TideStates {
     private state: ITideState = {};

@@ -6,7 +6,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
   templateUrl: "./login.component.html",
 })
 export class LoginComponent implements OnInit {
-  form: FormGroup;
+  form!: FormGroup;
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void { 
@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(`${this.form.get('username').value} ${this.form.get('password').value}`);
+    // console.log(`${this.form.get('username').value} ${this.form.get('password').value}`);
     this.form.reset();
   }
 }

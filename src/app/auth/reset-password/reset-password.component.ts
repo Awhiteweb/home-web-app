@@ -6,7 +6,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
     templateUrl: "./reset-password.component.html",
 })
 export class ResetPasswordComponent implements OnInit {
-    form: FormGroup
+    form!: FormGroup
     constructor(private fb: FormBuilder) { }
 
     ngOnInit(): void {
@@ -40,8 +40,8 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     private validPassword(form: FormGroup): any {
-        let p1 = form.get('password').value;
-        let p2 = form.get('confirmationPassword').value;
+        let p1 = form.get('password')!.value;
+        let p2 = form.get('confirmationPassword')!.value;
         return p1 === p2 ? null : {notSame: true};
     }
 }
