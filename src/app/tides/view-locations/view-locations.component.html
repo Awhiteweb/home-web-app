@@ -3,42 +3,47 @@
     <div class="flex flex-wrap items-center">
       <div class="relative w-full px-4 max-w-full flex-grow flex-1">
         <h3 class="font-semibold text-lg text-blueGray-700">
-          {{ location$ | async }} Tides
+          Locations
         </h3>
       </div>
     </div>
   </div>
   <div class="block w-full overflow-x-auto">
+    <!-- Projects table -->
+    <select>
+      <option *ngFor="let location of locationList$ | async" [value]="location.id">{{ location.name }}</option>
+    </select>
     <table class="items-center w-full bg-transparent border-collapse">
       <thead>
         <tr>
           <th
             class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
-            Date/Time
+            Name
           </th>
           <th
             class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
-            Height
+            ID
           </th>
           <th
             class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
-            High/Low
+            &nbsp;
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let tide of tides$ | async">
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            [ngClass]="tide.eventType == 'LowWater' ? 'bg-red-200' : ''">
-            {{ tide.dateTime | date:'EEE HH:mm'}}
+        <tr *ngFor="let location of locationList$ | async">
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            {{ location.name }}
           </td>
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            [ngClass]="tide.eventType == 'LowWater' ? 'bg-red-200' : ''">
-            {{ tide.height | number:'1.2-2'}}
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            {{ location.id }}
           </td>
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-            [ngClass]="tide.eventType == 'LowWater' ? 'bg-red-200' : ''">
-            {{ tide.eventType }}
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            <button
+              class="bg-red-600 text-white active:bg-red-700 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+              type="button" (click)="viewLocationTides(location.id)">
+              View
+            </button>
           </td>
         </tr>
       </tbody>

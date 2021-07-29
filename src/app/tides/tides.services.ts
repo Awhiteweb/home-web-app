@@ -1,41 +1,47 @@
-import { BehaviorSubject, Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { ApiService } from "../services/api.service";
-import { IServerResponse, Tides } from "./tides.entites";
-import { isSameDay } from 'date-fns';
+import {Injectable} from '@angular/core';
+import {format, parseISO} from 'date-fns';
+import {Observable} from "rxjs";
+import {map} from "rxjs/operators";
+import {environment} from "src/environments/environment";
+import {ApiService} from "../common/services/api.service";
+import {ITideLocationServerResponse, ITideServerResponse, TideLocations, Tides} from "./tides.entites";
+// import {TidesModule} from './tides.module';
 
+@Injectable({
+    providedIn: 'root'
+})
 export class TidesService {
 
-    private tidesState$ = new BehaviorSubject<Tides>([]);
+    constructor(private apiService: ApiService) { }
 
-    constructor(private apiService: ApiService) {}
-
-    list(): void {
-        if(!this.hasCurrentTides) {
-            this.apiService.get('', map((result: IServerResponse[]) => {
-                return result.map(r => ({
-                    eventType: r.EventType,
-                    dateTime: r.DateTime,
-                    height: r.Height
-                }));
-            })).subscribe((result) => {
-                this.tidesState$.next(result);
-            });
-        }
+    getLocations$(): Observable<TideLocations> {
+        return this.apiService.get(`${environment.assetsUri}/${this.year}/locations`, map((result: ITideLocationServerResponse): TideLocations => {
+            return result.features.map(r => ({
+                id: r.properties.Id,
+                name: r.properties.Name
+            }));
+        }));
     }
 
-    get tides$(): Observable<Tides> {
-        return this.tidesState$.asObservable();
+    getTides$(locationId: string): Observable<Tides> {
+        return this.apiService.get(`${environment.assetsUri}/${this.year}/${this.month}/${this.day}/${locationId}`, map((result: ITideServerResponse[]): Tides => {
+            return result.map(r => ({
+                dateTime: parseISO(r.DateTime),
+                eventType: r.EventType,
+                height: r.Height
+            }));
+        }));
     }
 
-    get hasCurrentTides(): boolean {
-        const state = this.tidesState$.value;
-        if(state.length == 0) {
-            return false;
-        }
-        if(isSameDay(state[0].dateTime, new Date())) {
-            return true;
-        }
-        return false;
+    private get year(): string {
+        return format(new Date(), 'yyyy');
+    }
+
+    private get month(): string {
+        return format(new Date(), 'MM');
+    }
+
+    private get day(): string {
+        return format(new Date(), 'dd');
     }
 }

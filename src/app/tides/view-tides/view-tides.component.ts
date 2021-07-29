@@ -1,18 +1,127 @@
-import { AfterViewInit, Component, OnInit } from "@angular/core";
-import Chart from "chart.js";
+import {AfterViewInit, Component, OnInit} from "@angular/core";
+// import {Chart, ChartConfiguration, ScatterDataPoint} from "chart.js";
+import {Observable, of} from "rxjs";
+import {map, tap} from "rxjs/operators";
+import {format, isBefore, addHours} from "date-fns";
+import {ITide, Tides} from "../tides.entites";
+import {TideStates} from "../tides.state";
 
 @Component({
-    selector: 'app-view-tides',
+    selector: 'app-tides-view',
     templateUrl: './view-tides.component.html'
 })
 export class ViewTidesComponent implements OnInit, AfterViewInit {
 
-    constructor() { }
+    location$!: Observable<string>;
+    tides$!: Observable<Tides>;
+    isChartReady$!: Observable<boolean>;
+    private xFormat = "dd/mm HH";
 
-    ngOnInit() { }
+    constructor(private tideState: TideStates) { }
 
-    ngAfterViewInit() {}
-    
+    ngOnInit() {
+        this.location$ = this.tideState.getCurrentLocation$;
+        this.tides$ = this.tideState.getTides$.pipe(
+            map((value: Tides) => value.sort((a: ITide, b: ITide) =>
+                isBefore(a.dateTime, b.dateTime) ? -1 : 1))
+        );
+        // this.isChartReady$ = this.tides$.pipe(
+        //     map((value: Tides): DataBuilder => ({
+        //         yAxis: this.yAxisLabels(value.map(x => x.height).sort((a,b) => a-b)),
+        //         tides: value
+        //     })),
+        //     map((value: DataBuilder): DataBuilder => ({
+        //         yAxis: value.yAxis,
+        //         xAxis: this.xAxisLabels(!!value.tides ? value.tides.map(x => x.dateTime) : []),
+        //         tides: value.tides
+        //     })),
+        //     map((value: DataBuilder): DataBuilder => ({
+        //         yAxis: value.yAxis,
+        //         xAxis: value.xAxis,
+        //         displayData: !!value.tides ? value.tides.map((tide: ITide): DisplayData => ({
+        //             // test rounding to nearest hour
+        //             x: format(tide.dateTime, this.xFormat),
+        //             y: tide.height
+        //         })) : []
+        //     })),
+        //     tap((value: DataBuilder) => {
+        //         const config = this.buildChartConfig(value);
+        //         this.setChartData(config);
+        //     }),
+        //     map((value: DataBuilder) => !!value)
+        // );
+    }
+
+    ngAfterViewInit() { }
+
+    private yAxisLabels(dataset: number[]): number[] {
+        const axis = [];
+        let start = Math.floor(dataset[0]);
+        const end = Math.ceil(dataset[dataset.length - 1]);
+        while(start <= end) {
+            axis.push(start);
+            start += 0.5;
+        }
+        return axis;
+    }
+
+    private xAxisLabels(dataset: Date[]): string[] {
+        const axis = [];
+        let current = dataset[0];
+        do {
+            axis.push(format(current, this.xFormat));
+            current = addHours(current, 1);
+        } while(isBefore(current, dataset[dataset.length - 1]));
+        return axis;
+    }
+
+    // private buildChartConfig(value: DataBuilder): ILineChartConfig {
+    //     const config: ILineChartConfig = {
+    //         type: "line",
+    //         data: {
+    //             labels: value.xAxis,
+    //             datasets: [
+    //                 {
+    //                     data: value.displayData,
+    //                     label: "Tides",
+    //                     tension: 0.9
+    //                 }
+    //             ],
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             // title: {
+    //             //     display: false,
+    //             //     text: "Tide Chart",
+    //             //     fontColor: "white",
+    //             // },
+    //             // tooltips: {
+    //             //     mode: "index",
+    //             //     intersect: false,
+    //             // },
+    //             hover: {
+    //                 mode: "nearest",
+    //                 intersect: true,
+    //             },
+    //             scales: {
+    //                 xAxes: {
+    //                     display: true,
+    //                 },
+    //                 yAxes:{
+    //                     display: true
+    //                 } 
+    //             }
+    //         }
+    //     };
+    //     return config;
+    // }
+
+    // setChartData(config: ILineChartConfig) {
+    //     let ctx: any = document.getElementById("line-chart") as HTMLCanvasElement;
+    //     ctx = ctx.getContext("2d");
+    //     new Chart(ctx, config);
+    // }
+
     private loadChart() {
         var config = {
             type: "line",
@@ -107,8 +216,121 @@ export class ViewTidesComponent implements OnInit, AfterViewInit {
                 },
             },
         };
-        let ctx: any = document.getElementById("line-chart") as HTMLCanvasElement;
-        ctx = ctx.getContext("2d");
-        new Chart(ctx, config);
+        // let ctx: any = document.getElementById("line-chart") as HTMLCanvasElement;
+        // ctx = ctx.getContext("2d");
+        // new Chart(ctx, config);
     }
+}
+
+interface DisplayData {
+    x: number,
+    y: number
+}
+
+interface DataBuilder {
+    yAxis: number[];
+    xAxis: string[];
+    tides: Tides;
+    displayData: DisplayData[];
+}
+
+/**
+ * Will probably move to another class
+ */
+
+//  export interface ILineChartConfig extends ChartConfiguration {}
+
+export interface IData {
+    labels?: string[];
+    datasets: IDataset[];
+}
+
+export interface IDataset {
+    label: string;
+    backgroundColor?: string;
+    borderColor?: string;
+    data: DatasetData;
+    parsing?: IParsing;
+    fill?: boolean;
+    tension?: number
+}
+
+export interface IParsing {
+    yAxisKey: string
+}
+
+/**
+ * Dataset data can be either a number array
+ * 
+ * or 
+ * 
+ * Custom data object
+ * 
+ * The object can contain be a simple x,y object that doesn't need any parsing parameters
+ * 
+ * ```{x: string, y: number}```
+ * 
+ * or a more complex data object with an x property any other properties with number values. These objects need parsing parameters
+ * 
+ * ```{x: string, [key: string]: number}```
+ */
+export type DatasetData = number[] | any;
+
+export interface IOptions {
+    maintainAspectRatio?: boolean;
+    responsive?: boolean;
+    title?: ITile;
+    legend?: ILegend;
+    tooltips?: ITooltip;
+    hover?: ITooltip;
+    scales?: IScales;
+}
+
+export interface ITile {
+    display?: boolean;
+    text: string;
+    fontColor?: string;
+}
+
+export interface ILegend {
+    labels?: ITicks;
+    align?: string;
+    position?: string;
+}
+
+export interface ITooltip {
+    mode: string;
+    intersect: boolean;
+}
+
+export interface IScales {
+    xAxes: IAxis[];
+    yAxes: IAxis[];
+}
+
+export interface IAxis {
+    ticks?: ITicks;
+    display?: boolean;
+    scaleLabel?: IScaleLabel;
+    gridLines?: IGridLines;
+}
+
+export interface ITicks {
+    fontColor?: string;
+}
+
+export interface IScaleLabel {
+    display?: boolean;
+    labelString?: string;
+    fontColor?: string;
+}
+
+export interface IGridLines {
+    display?: boolean;
+    borderDash?: number[];
+    borderDashOffset?: number[];
+    color?: string;
+    zeroLineColor?: string;
+    zeroLineBorderDash?: number[];
+    zeroLineBorderDashOffset?: number[];
 }

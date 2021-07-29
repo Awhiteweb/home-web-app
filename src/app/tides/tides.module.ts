@@ -1,23 +1,24 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
-import { RouterModule, Routes } from "@angular/router";
+// import {CommonModule} from "@angular/common";
+// import {NgModule} from "@angular/core";
+// import {ReactiveFormsModule} from "@angular/forms";
+// import {LayoutComponent} from "./layout/layout.component";
+// import {TidesRoutingModule} from "./tides.routing.module";
+// import {ViewLocationsComponent} from "./view-locations/view-locations.component";
+// import {ViewTidesComponent} from "./view-tides/view-tides.component";
 
-const routes: Routes = [
-    {
-        path: 'view',
-        component: 
-    }
-];
 
-@NgModule({
-    exports: [RouterModule],
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        RouterModule.forChild( routes )
-    ],
-    declarations: [
-    ]
-})
-export class TidesModule {}
+
+// @NgModule({
+//     exports: [],
+//     imports: [
+//         TidesRoutingModule,
+//         CommonModule,
+//         ReactiveFormsModule
+//     ],
+//     declarations: [
+//         LayoutComponent,
+//         ViewLocationsComponent,
+//         ViewTidesComponent
+//     ]
+// })
+// export class TidesModule { }

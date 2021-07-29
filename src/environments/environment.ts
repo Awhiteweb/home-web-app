@@ -4,6 +4,8 @@
 
 export const environment = {
   production: false,
+  assetsUri: 'https://coutts-white-home-assets.s3.eu-west-1.amazonaws.com',
+  defaultLocation: '0068'
 };
 
 /*
