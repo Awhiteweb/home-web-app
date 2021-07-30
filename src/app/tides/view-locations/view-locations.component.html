@@ -1,52 +1,18 @@
-<div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
-  <div class="rounded-t mb-0 px-4 py-3 border-0">
-    <div class="flex flex-wrap items-center">
-      <div class="relative w-full px-4 max-w-full flex-grow flex-1">
-        <h3 class="font-semibold text-lg text-blueGray-700">
-          Locations
-        </h3>
+<div class="rounded-t mb-0 px-4 py-3 border-0">
+  <div class="block w-full overflow-x-auto">
+    <button class="hover:text-blueGray-500 text-blueGray-700 px-3 py-2 flex items-center text-xs uppercase font-bold"
+      (click)="toggleDropdown($event)" #btnDropdownRef>
+      Locations
+    </button>
+    <div class="z-50" style="min-width: 12rem;" #popoverDropdownRef>
+      <div class="bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1"
+        [ngClass]="dropdownPopoverShow ? 'block' : 'hidden'" style="min-width: 12rem;">
+        <a *ngFor="let location of locationList$ | async" href="#pablo"
+          class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+          (click)="changeLocation(location.id)">
+          {{ location.name }}
+        </a>
       </div>
     </div>
-  </div>
-  <div class="block w-full overflow-x-auto">
-    <!-- Projects table -->
-    <select>
-      <option *ngFor="let location of locationList$ | async" [value]="location.id">{{ location.name }}</option>
-    </select>
-    <table class="items-center w-full bg-transparent border-collapse">
-      <thead>
-        <tr>
-          <th
-            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
-            Name
-          </th>
-          <th
-            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
-            ID
-          </th>
-          <th
-            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
-            &nbsp;
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let location of locationList$ | async">
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-            {{ location.name }}
-          </td>
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-            {{ location.id }}
-          </td>
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-            <button
-              class="bg-red-600 text-white active:bg-red-700 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-              type="button" (click)="viewLocationTides(location.id)">
-              View
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </div>
