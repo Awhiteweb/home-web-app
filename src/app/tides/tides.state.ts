@@ -3,16 +3,13 @@ import {BehaviorSubject, combineLatest, Observable} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {environment} from "src/environments/environment";
 import {TideLocations, Tides} from "./tides.entites";
-// import {TidesModule} from "./tides.module";
 import {TidesService} from "./tides.services";
 
 interface ITideState {
     [key: string]: BehaviorSubject<Tides>;
 }
 
-@Injectable({
-    providedIn: 'any'
-})
+@Injectable()
 export class TideStates {
     private state: ITideState = {};
     private locations$: BehaviorSubject<TideLocations> = new BehaviorSubject<TideLocations>([]);

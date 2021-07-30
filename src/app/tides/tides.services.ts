@@ -1,15 +1,12 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {format, parseISO} from 'date-fns';
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 import {environment} from "src/environments/environment";
-import {ApiService} from "../common/services/api.service";
+import {ApiService} from "../shared/services/api.service";
 import {ITideLocationServerResponse, ITideServerResponse, TideLocations, Tides} from "./tides.entites";
-// import {TidesModule} from './tides.module';
 
-@Injectable({
-    providedIn: 'any'
-})
+@Injectable()
 export class TidesService {
 
     constructor(private apiService: ApiService) { }
