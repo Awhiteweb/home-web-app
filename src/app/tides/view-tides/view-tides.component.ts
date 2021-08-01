@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, OnInit} from "@angular/core";
 // import {Chart, ChartConfiguration, ScatterDataPoint} from "chart.js";
-import {Observable, of} from "rxjs";
-import {map, tap} from "rxjs/operators";
+import {Observable} from "rxjs";
 import {format, isBefore, addHours} from "date-fns";
-import {ITide, Tides} from "../tides.entites";
-import {TideStates} from "../tides.state";
+import {Tides} from "../tides.entites";
+import {Select} from "@ngxs/store";
+import {TidesState} from "../state/tides.state";
 
 @Component({
     selector: 'app-tides-view',
@@ -12,45 +12,14 @@ import {TideStates} from "../tides.state";
 })
 export class ViewTidesComponent implements OnInit, AfterViewInit {
 
-    location$!: Observable<string>;
-    tides$!: Observable<Tides>;
+    @Select(TidesState.tides) tides$!: Observable<Tides>;
+    @Select(TidesState.currentLocation) location$!: Observable<string>;
     isChartReady$!: Observable<boolean>;
     private xFormat = "dd/mm HH";
 
-    constructor(private tideState: TideStates) { }
+    constructor() { }
 
-    ngOnInit() {
-        this.location$ = this.tideState.getCurrentLocation$;
-        this.tides$ = this.tideState.getTides$.pipe(
-            map((value: Tides) => value.sort((a: ITide, b: ITide) =>
-                isBefore(a.dateTime, b.dateTime) ? -1 : 1))
-        );
-        // this.isChartReady$ = this.tides$.pipe(
-        //     map((value: Tides): DataBuilder => ({
-        //         yAxis: this.yAxisLabels(value.map(x => x.height).sort((a,b) => a-b)),
-        //         tides: value
-        //     })),
-        //     map((value: DataBuilder): DataBuilder => ({
-        //         yAxis: value.yAxis,
-        //         xAxis: this.xAxisLabels(!!value.tides ? value.tides.map(x => x.dateTime) : []),
-        //         tides: value.tides
-        //     })),
-        //     map((value: DataBuilder): DataBuilder => ({
-        //         yAxis: value.yAxis,
-        //         xAxis: value.xAxis,
-        //         displayData: !!value.tides ? value.tides.map((tide: ITide): DisplayData => ({
-        //             // test rounding to nearest hour
-        //             x: format(tide.dateTime, this.xFormat),
-        //             y: tide.height
-        //         })) : []
-        //     })),
-        //     tap((value: DataBuilder) => {
-        //         const config = this.buildChartConfig(value);
-        //         this.setChartData(config);
-        //     }),
-        //     map((value: DataBuilder) => !!value)
-        // );
-    }
+    ngOnInit() { }
 
     ngAfterViewInit() { }
 

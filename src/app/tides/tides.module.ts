@@ -1,10 +1,11 @@
 import {CommonModule} from "@angular/common";
 import {NgModule} from "@angular/core";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule} from "@angular/forms";
+import {NgxsModule} from "@ngxs/store";
 import {LayoutComponent} from "./layout/layout.component";
+import {TidesState} from "./state/tides.state";
 import {TidesRoutingModule} from "./tides.routing.module";
 import {TidesService} from "./tides.services";
-import {TideStates} from "./tides.state";
 import {ViewLocationsComponent} from "./view-locations/view-locations.component";
 import {ViewTidesComponent} from "./view-tides/view-tides.component";
 
@@ -13,7 +14,8 @@ import {ViewTidesComponent} from "./view-tides/view-tides.component";
     imports: [
         CommonModule,
         TidesRoutingModule,
-        ReactiveFormsModule
+        FormsModule,
+        NgxsModule.forFeature([TidesState])
     ],
     declarations: [
         LayoutComponent,
@@ -21,7 +23,6 @@ import {ViewTidesComponent} from "./view-tides/view-tides.component";
         ViewTidesComponent
     ],
     providers: [
-        TideStates,
         TidesService
     ]
 })

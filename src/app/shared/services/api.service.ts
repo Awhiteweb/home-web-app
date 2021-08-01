@@ -9,11 +9,11 @@ export class ApiService {
 
     constructor(private httpClient: HttpClient) { }
 
-    public get<T, R>(route: string, mapper: OperatorFunction<T, R>): Observable<R> {
-        return this.httpClient.get<T>(route).pipe(mapper);
+    public get<T>(route: string): Observable<T> {
+        return this.httpClient.get<T>(route);
     }
 
-    public post<T, R>(route: string, body: any, mapper: OperatorFunction<T, R>): Observable<R> {
-        return this.httpClient.post<T>(route, body).pipe(mapper);
+    public post<T>(route: string, body: any): Observable<T> {
+        return this.httpClient.post<T>(route, body);
     }
 }

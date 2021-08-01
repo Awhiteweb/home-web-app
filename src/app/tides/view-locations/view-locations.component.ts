@@ -1,9 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import {Select, Store} from "@ngxs/store";
 import {createPopper} from "@popperjs/core";
-import {Observable} from "rxjs";
-import {map, tap} from "rxjs/operators";
+import {BehaviorSubject, Observable, combineLatest} from "rxjs";
+import { debounceTime, map } from "rxjs/operators";
+import {environment} from "src/environments/environment";
+import {FetchTideLocations, SetTidesLocation} from "../state/tides.actions";
+import {TidesState} from "../state/tides.state";
 import {TideLocations} from "../tides.entites";
-import {TideStates} from "../tides.state";
 
 @Component({
     selector: 'app-tides-locations',
@@ -12,6 +15,7 @@ import {TideStates} from "../tides.state";
 export class ViewLocationsComponent implements OnInit {
 
     dropdownPopoverShow = false;
+    private filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     @ViewChild("btnDropdownRef", {static: false})
     btnDropdownRef!: ElementRef;
@@ -38,17 +42,29 @@ export class ViewLocationsComponent implements OnInit {
         );
     }
 
-    locationList$!: Observable<TideLocations>;
+    @Select(TidesState.locations) locationList$!: Observable<TideLocations>;
+    filteredLocations$!: Observable<TideLocations>;
 
-    constructor(private tidesState: TideStates) { }
+    constructor(private store: Store) { }
 
     ngOnInit() {
-        this.locationList$ = this.tidesState.getLocations$.pipe(
-            map((x) => x.sort((a, b) => a.name > b.name ? 1 : -1)),
-            tap((x) => console.log(`locations: ${x.length}`)));
+        this.store.dispatch(FetchTideLocations);
+        this.filteredLocations$ = combineLatest([this.filter$, this.locationList$]).pipe(
+            map(([filter, locationList]) => {
+                if(filter == null || filter.length < 1) {
+                    return locationList;
+                }
+                return locationList.filter(location => location.name.toLocaleLowerCase().indexOf(filter) > -1)
+            }),
+            debounceTime(200)
+        );
+    }
+    
+    changeLocation(locationId: string): void {
+        this.store.dispatch(new SetTidesLocation(locationId));
     }
 
-    viewLocationTides(locationId: string): void {
-        this.tidesState.setLocation(locationId);
+    applyFilter(arg: string) {
+        this.filter$.next(arg.toLowerCase());
     }
 }
