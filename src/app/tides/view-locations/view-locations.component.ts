@@ -48,7 +48,7 @@ export class ViewLocationsComponent implements OnInit {
     constructor(private store: Store) { }
 
     ngOnInit() {
-        this.store.dispatch(FetchTideLocations);
+        this.store.dispatch(new FetchTideLocations());
         this.filteredLocations$ = combineLatest([this.filter$, this.locationList$]).pipe(
             map(([filter, locationList]) => {
                 if(filter == null || filter.length < 1) {
