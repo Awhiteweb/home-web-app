@@ -17,7 +17,7 @@ export interface TidesStateModel {
 @State<TidesStateModel>({
     name: 'tides',
     defaults: {
-        currentLocation: environment.defaultLocation,
+        currentLocation: '',
         locations: [],
         tides: []
     }
