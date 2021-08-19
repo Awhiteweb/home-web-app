@@ -9,10 +9,12 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {UnusedModule} from './unused/unused.module';
 import {SharedModule} from './shared/shared.module';
 import {environment} from 'src/environments/environment';
+import { YesNoPipe } from './yes-no.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
+    YesNoPipe,
   ],
   imports: [
     BrowserModule,

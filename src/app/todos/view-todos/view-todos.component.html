@@ -1,0 +1,51 @@
+<div class="rounded-t mb-0 px-4 py-3 border-0">
+  <div class="block w-full overflow-x-auto">
+
+    <div class="z-50" style="min-width: 12rem;">
+      <div class="bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1 block"
+        style="min-width: 12rem;">
+        <input type="text" name="filter" placeholder="Filter"
+          class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+          ngModel (ngModelChange)="applyFilter($event)" />
+      </div>
+    </div>
+    <table class="items-center w-full bg-transparent border-collapse">
+      <thead>
+        <tr>
+          <th
+            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
+            Created
+          </th>
+          <th
+            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
+            Todo
+          </th>
+          <th
+            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
+            Group
+          </th>
+          <th
+            class="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100">
+            Completed
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let todo of todos$ | async">
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            {{ todo.createdAt | date:'yyyy-MM-dd' }}
+          </td>
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            {{ todo.value }}
+          </td>
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            {{ todo.group }}
+          </td>
+          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+            {{ todo.completed | yesNo }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
