@@ -3,7 +3,6 @@ import {Action, Selector, State, StateContext} from "@ngxs/store";
 import {patch} from "@ngxs/store/operators";
 import {isBefore} from "date-fns";
 import {map, tap} from "rxjs/operators";
-import {environment} from "src/environments/environment";
 import {ITide, ITideLocation, TideLocations, Tides} from "../tides.entites";
 import {TidesService} from "../tides.services";
 import {FetchTideLocations, FetchTides, SetTidesLocation} from "./tides.actions";
