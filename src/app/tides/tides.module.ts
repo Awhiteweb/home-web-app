@@ -23,6 +23,7 @@ import {ViewTidesComponent} from "./view-tides/view-tides.component";
         ViewTidesComponent
     ],
     providers: [
+        TidesState,
         TidesService
     ]
 })
