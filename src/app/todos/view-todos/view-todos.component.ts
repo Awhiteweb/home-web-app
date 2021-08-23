@@ -37,19 +37,6 @@ export class ViewTodosComponent implements OnInit {
     });
     private displayList$!: Observable<Todos>;
     private filteredTodos$!: Observable<Todos>;
-    // private reducer = (accumulator: TodoGroup[], current: ITodo): TodoGroup[] => {
-    //     const groupIdx = accumulator.findIndex(g => g.group == current.group);
-    //     if(groupIdx == -1) {
-    //         accumulator.push({
-    //             group: current.group,
-    //             todos: [current]
-    //         });
-    //     }
-    //     else {
-    //         accumulator[groupIdx].todos.push(current);
-    //     }
-    //     return accumulator;
-    // }
 
     @Select(TodosState.incompleteList)
     private incompleteList$!: Observable<Todos>;
