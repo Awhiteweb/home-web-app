@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {format, parseISO} from 'date-fns';
 import {Observable, throwError} from "rxjs";
-import {catchError, delay, map} from "rxjs/operators";
+import {catchError, delay, delayWhen, map, switchMap} from "rxjs/operators";
 import {environment} from "src/environments/environment";
 import {ApiService} from "../shared/services/api.service";
 import {ITideLocationServerResponse, ITideServerResponse, TideLocations, Tides} from "./tides.entites";
@@ -22,26 +22,7 @@ export class TidesService {
     }
 
     getTides$(locationId: string): Observable<Tides> {
-        return this.apiService.get<ITideServerResponse[]>(`${environment.assetsUri}/${this.year}/${this.month}/${this.day}/${locationId}`).pipe(
-            catchError((error: any, caught: Observable<ITideServerResponse[]>) => {
-                if(error.error instanceof ErrorEvent) {
-                    console.error(error.error.message);
-                }
-                else if(error.status == 403 || error.status == 404) {
-                    console.log("need to call lambda to get new data");
-                    // make request to lambda function to get different data
-                    // return this.apiService.get<void>(`${environment.lambdaUri}/${locationId}`).pipe(
-                    //     delay(1000),
-                    //     switchMap(() => this.getTides$(locationId))
-                    // );
-                }
-                return throwError(this.getServerErrorMessage(error));
-            }),
-            map((result: ITideServerResponse[]): Tides => result.map(r => ({
-                dateTime: parseISO(r.DateTime),
-                eventType: r.EventType,
-                height: r.Height
-            }))));
+        return this.fetchTides$(locationId);
     }
 
     private get year(): string {
@@ -70,7 +51,32 @@ export class TidesService {
             default: {
                 return `Unknown Server Error: ${error.message}`;
             }
-
         }
+    }
+
+    private fetchTides$(locationId: string): Observable<Tides> {
+        return this.apiService.get<ITideServerResponse[]>(`${environment.assetsUri}/${this.year}/${this.month}/${this.day}/${locationId}`).pipe(
+            map((result: ITideServerResponse[]): Tides => result.map(r => ({
+                dateTime: parseISO(r.DateTime),
+                eventType: r.EventType,
+                height: r.Height
+            }))),
+            catchError((error: any, caught: Observable<Tides>) => {
+                if(error.error instanceof ErrorEvent) {
+                    console.error(error.error.message);
+                }
+                else if(error.status == 403 || error.status == 404) {
+                    console.log("need to call lambda to get new data");
+                    return this.updateTides$(locationId);
+                }
+                return throwError(this.getServerErrorMessage(error));
+            }));
+    }
+
+    private updateTides$(locationId: string): Observable<Tides> {
+        return this.apiService.get<boolean>(`${environment.lambdaUri}/tides/${locationId}`).pipe(
+            delay(1000),
+            switchMap((result) => this.fetchTides$(locationId))
+        );
     }
 }
