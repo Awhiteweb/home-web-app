@@ -30,7 +30,14 @@ export class NavbarDropdownComponent implements OnInit {
       this.btnDropdownRef.nativeElement,
       this.popoverDropdownRef.nativeElement,
       {
-        placement: "bottom-start",
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [-170, 0]
+            }
+          }
+        ]
       }
     );
   }
