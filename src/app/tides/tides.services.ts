@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {format, parseISO} from 'date-fns';
-import {Observable, throwError} from "rxjs";
+import {Observable, throwError, timer} from "rxjs";
 import {catchError, delay, delayWhen, map, switchMap} from "rxjs/operators";
 import {environment} from "src/environments/environment";
 import {ApiService} from "../shared/services/api.service";
@@ -22,7 +22,7 @@ export class TidesService {
     }
 
     getTides$(locationId: string): Observable<Tides> {
-        return this.fetchTides$(locationId);
+        return this.fetchTides$(locationId, 1);
     }
 
     private get year(): string {
@@ -54,7 +54,7 @@ export class TidesService {
         }
     }
 
-    private fetchTides$(locationId: string): Observable<Tides> {
+    private fetchTides$(locationId: string, attempt: number): Observable<Tides> {
         return this.apiService.get<ITideServerResponse[]>(`${environment.assetsUri}/${this.year}/${this.month}/${this.day}/${locationId}`).pipe(
             map((result: ITideServerResponse[]): Tides => result.map(r => ({
                 dateTime: parseISO(r.DateTime),
@@ -65,18 +65,21 @@ export class TidesService {
                 if(error.error instanceof ErrorEvent) {
                     console.error(error.error.message);
                 }
-                else if(error.status == 403 || error.status == 404) {
+                else if((error.status == 403 || error.status == 404) && attempt == 1) {
                     console.log("need to call lambda to get new data");
-                    return this.updateTides$(locationId);
+                    return this.updateTides$(locationId, attempt);
+                }
+                else if(attempt < 3) {
+                    return timer(1000).pipe(switchMap(() => this.fetchTides$(locationId, attempt+1)));
                 }
                 return throwError(this.getServerErrorMessage(error));
             }));
     }
 
-    private updateTides$(locationId: string): Observable<Tides> {
+    private updateTides$(locationId: string, attempt: number): Observable<Tides> {
         return this.apiService.get<boolean>(`${environment.lambdaUri}/tides/${locationId}`).pipe(
             delay(1000),
-            switchMap((result) => this.fetchTides$(locationId))
+            switchMap((result) => this.fetchTides$(locationId, attempt+1))
         );
     }
 }
