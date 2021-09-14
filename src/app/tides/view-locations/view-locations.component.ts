@@ -2,9 +2,8 @@ import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {Select, Store} from "@ngxs/store";
 import {createPopper} from "@popperjs/core";
 import {BehaviorSubject, Observable, combineLatest} from "rxjs";
-import { debounceTime, map } from "rxjs/operators";
-import {environment} from "src/environments/environment";
-import {FetchTideLocations, SetTidesLocation} from "../state/tides.actions";
+import {debounceTime, map} from "rxjs/operators";
+import {SetTidesLocation} from "../state/tides.actions";
 import {TidesState} from "../state/tides.state";
 import {TideLocations} from "../tides.entites";
 
@@ -48,7 +47,10 @@ export class ViewLocationsComponent implements OnInit {
     constructor(private store: Store) { }
 
     ngOnInit() {
+<<<<<<< HEAD
         this.store.dispatch(new FetchTideLocations());
+=======
+>>>>>>> 926f7854b5b9cf9cab06e27ae6f73cbebfd39ef5
         this.filteredLocations$ = combineLatest([this.filter$, this.locationList$]).pipe(
             map(([filter, locationList]) => {
                 if(filter == null || filter.length < 1) {

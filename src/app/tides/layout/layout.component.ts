@@ -1,4 +1,7 @@
 import {Component, OnInit} from "@angular/core";
+import {Store} from "@ngxs/store";
+import {environment} from "src/environments/environment";
+import {FetchTideLocations, SetTidesLocation} from "../state/tides.actions";
 
 @Component({
     selector: 'app-tides-layout',
@@ -6,5 +9,10 @@ import {Component, OnInit} from "@angular/core";
 })
 export class LayoutComponent implements OnInit {
 
-    ngOnInit() { }
+    constructor(private store: Store) {}
+    
+    ngOnInit() { 
+        this.store.dispatch(new FetchTideLocations());
+        this.store.dispatch(new SetTidesLocation(environment.defaultLocation));
+    }
 }

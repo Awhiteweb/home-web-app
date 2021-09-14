@@ -1,5 +1,3 @@
-import {Tides} from "../tides.entites";
-
 export class FetchTides {
     static readonly type = '[Tides] Fetch Tides';
 }
