@@ -2,7 +2,6 @@ import {Tides} from "../tides.entites";
 
 export class FetchTides {
     static readonly type = '[Tides] Fetch Tides';
-    constructor(public locationId: string) {}
 }
 
 export class SetTidesLocation {
