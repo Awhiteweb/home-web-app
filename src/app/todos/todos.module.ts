@@ -7,6 +7,7 @@ import {CreateTodoComponent} from "./create-todo/create-todo.component";
 import {LayoutComponent} from "./layout/layout.component";
 import {TodosState} from "./state/todos.state";
 import {TodosRoutingModule} from "./todos.routing.module";
+import { TodoService } from "./todos.service";
 import {ViewTodosComponent} from "./view-todos/view-todos.component";
 
 @NgModule({
@@ -24,7 +25,8 @@ import {ViewTodosComponent} from "./view-todos/view-todos.component";
         YesNoPipe
     ],
     providers: [
-        TodosState
+        TodosState,
+        TodoService
     ]
 })
 export class TodosModule {

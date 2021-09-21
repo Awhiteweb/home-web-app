@@ -1,4 +1,6 @@
 import {Component, OnInit} from "@angular/core";
+import { Store } from "@ngxs/store";
+import { FetchTodos } from "../state/todos.actions";
 
 @Component({
     selector: 'app-todos-layout',
@@ -6,7 +8,9 @@ import {Component, OnInit} from "@angular/core";
 })
 export class LayoutComponent implements OnInit {
 
-    constructor() { }
+    constructor(private store: Store) { }
 
-    ngOnInit() { }
+    ngOnInit() { 
+        this.store.dispatch(new FetchTodos());
+    }
 }
