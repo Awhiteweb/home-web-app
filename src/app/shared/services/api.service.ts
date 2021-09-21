@@ -16,4 +16,12 @@ export class ApiService {
     public post<T>(route: string, body: any): Observable<T> {
         return this.httpClient.post<T>(route, body);
     }
+
+    public put<T>(route: string, body: any): Observable<T> {
+        return this.httpClient.put<T>(route, body);
+    }
+
+    public delete<T>(route: string): Observable<T> {
+        return this.httpClient.delete<T>(route);
+    }
 }

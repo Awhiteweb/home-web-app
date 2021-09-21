@@ -19,3 +19,18 @@ export class UpdateTodoGroup {
     static readonly type = '[Todos] Update Todo Group';
     constructor(public id: string, public group: string) {}
 }
+
+export class DeleteTodo {
+    static readonly type = '[Todos] Delete Todo';
+    constructor(public id: string) {}
+}
+
+export class DeleteTodoGroup {
+    static readonly type = '[Todos] Delete Todo Group';
+    constructor(public group: string) {}
+}
+
+export class FetchTodos {
+    static readonly type = '[Todos] Fetch Todos';
+    constructor() {}
+}
