@@ -1,13 +1,13 @@
 import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 
 @Component({
     selector: "app-reset-password",
     templateUrl: "./reset-password.component.html",
 })
 export class ResetPasswordComponent implements OnInit {
-    form!: FormGroup
-    constructor(private fb: FormBuilder) { }
+    form!: UntypedFormGroup
+    constructor(private fb: UntypedFormBuilder) { }
 
     ngOnInit(): void {
         this.form = this.fb.group({
@@ -39,7 +39,7 @@ export class ResetPasswordComponent implements OnInit {
         // this.thinking = false;
     }
 
-    private validPassword(form: FormGroup): any {
+    private validPassword(form: UntypedFormGroup): any {
         let p1 = form.get('password')!.value;
         let p2 = form.get('confirmationPassword')!.value;
         return p1 === p2 ? null : {notSame: true};
