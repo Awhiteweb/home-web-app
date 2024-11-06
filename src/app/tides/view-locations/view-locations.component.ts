@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {Select, Store} from "@ngxs/store";
+import {Store} from "@ngxs/store";
 import {createPopper} from "@popperjs/core";
 import {BehaviorSubject, Observable, combineLatest} from "rxjs";
 import {debounceTime, map} from "rxjs/operators";
@@ -41,10 +41,12 @@ export class ViewLocationsComponent implements OnInit {
         );
     }
 
-    @Select(TidesState.locations) locationList$!: Observable<TideLocations>;
+    locationList$: Observable<TideLocations>;
     filteredLocations$!: Observable<TideLocations>;
 
-    constructor(private store: Store) { }
+    constructor(private store: Store) {
+        this.locationList$ = store.select(TidesState.locations);
+     }
 
     ngOnInit() {
         this.filteredLocations$ = combineLatest([this.filter$, this.locationList$]).pipe(

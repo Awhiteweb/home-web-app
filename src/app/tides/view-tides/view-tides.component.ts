@@ -3,7 +3,7 @@ import {AfterViewInit, Component, OnInit} from "@angular/core";
 import {Observable} from "rxjs";
 import {format, isBefore, addHours} from "date-fns";
 import {Tides} from "../tides.entites";
-import {Select, Store} from "@ngxs/store";
+import {Store} from "@ngxs/store";
 import {TidesState} from "../state/tides.state";
 import {FetchTides} from "../state/tides.actions";
 
@@ -12,13 +12,15 @@ import {FetchTides} from "../state/tides.actions";
     templateUrl: './view-tides.component.html'
 })
 export class ViewTidesComponent implements OnInit, AfterViewInit {
-
-    @Select(TidesState.tides) tides$!: Observable<Tides>;
-    @Select(TidesState.currentLocation) location$!: Observable<string>;
+    tides$: Observable<Tides>;
+    location$: Observable<string>;
     isChartReady$!: Observable<boolean>;
     private xFormat = "dd/mm HH";
 
-    constructor(private store: Store) {}
+    constructor(private store: Store) {
+        this.tides$ = store.select(TidesState.tides);
+        this.location$ = store.select(TidesState.currentLocation);
+    }
 
     ngOnInit() { 
         this.store.dispatch(new FetchTides());

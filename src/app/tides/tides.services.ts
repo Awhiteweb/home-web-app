@@ -1,8 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import {HttpErrorResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {format, parseISO} from 'date-fns';
+import {format} from 'date-fns/format';
+import {parseISO} from 'date-fns/parseISO';
 import {Observable, throwError, timer} from "rxjs";
-import {catchError, delay, delayWhen, map, switchMap} from "rxjs/operators";
+import {catchError, delay, map, switchMap} from "rxjs/operators";
 import {environment} from "src/environments/environment";
 import {ApiService} from "../shared/services/api.service";
 import {ITideLocationServerResponse, ITideServerResponse, TideLocations, Tides} from "./tides.entites";
@@ -72,7 +73,7 @@ export class TidesService {
                 else if(attempt < 3) {
                     return timer(1000).pipe(switchMap(() => this.fetchTides$(locationId, attempt+1)));
                 }
-                return throwError(this.getServerErrorMessage(error));
+                return throwError(() => new Error(this.getServerErrorMessage(error)));
             }));
     }
 
