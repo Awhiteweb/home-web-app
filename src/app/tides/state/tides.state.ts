@@ -1,14 +1,15 @@
 import {Injectable} from "@angular/core";
 import {Action, Selector, State, StateContext} from "@ngxs/store";
 import {patch} from "@ngxs/store/operators";
-import {isBefore} from "date-fns";
+import {isBefore} from "date-fns/isBefore";
 import {map, tap} from "rxjs/operators";
 import {ITide, ITideLocation, TideLocations, Tides} from "../tides.entites";
 import {TidesService} from "../tides.services";
 import {FetchTideLocations, FetchTides, SetTidesLocation} from "./tides.actions";
+import { environment } from "src/environments/environment";
 
 export interface TidesStateModel {
-    currentLocation: string;
+    currentLocation: ITideLocation;
     locations: TideLocations;
     tides: Tides;
 }
@@ -16,7 +17,7 @@ export interface TidesStateModel {
 @State<TidesStateModel>({
     name: 'tides',
     defaults: {
-        currentLocation: '',
+        currentLocation: {id: environment.defaultLocation, name: ''},
         locations: [],
         tides: []
     }
@@ -27,7 +28,7 @@ export class TidesState {
 
     @Selector()
     static currentLocation(state: TidesStateModel) {
-        return state.locations.filter(l => l.id == state.currentLocation)[0].name;
+        return state.currentLocation;
     }
 
     @Selector()
@@ -49,6 +50,7 @@ export class TidesState {
             tap((locations: TideLocations) => {
                 console.log("patching locations");
                 ctx.setState(patch({locations}));
+                ctx.dispatch(new SetTidesLocation(ctx.getState().currentLocation.id))
             })
         );
     }
@@ -56,7 +58,7 @@ export class TidesState {
     @Action(FetchTides)
     fetchTides(ctx: StateContext<TidesStateModel>) {
         const state = ctx.getState();
-        return this.service.getTides$(state.currentLocation).pipe(
+        return this.service.getTides$(state.currentLocation.id).pipe(
             map((tides: Tides) => tides.sort((a: ITide, b: ITide) =>
                 isBefore(a.dateTime, b.dateTime) ? -1 : 1)),
             tap((tides: Tides) => {
@@ -70,7 +72,8 @@ export class TidesState {
     setTidesLocation(ctx: StateContext<TidesStateModel>, {locationId}: SetTidesLocation) {
         const state = ctx.getState();
         console.log(`patching location: ${locationId}`);
-        ctx.setState(patch({currentLocation: locationId}));
+        const location = state.locations.filter(l => l.id == locationId)[0];
+        ctx.setState(patch({currentLocation: location}));
         return ctx.dispatch(new FetchTides());
     }
 }

@@ -13,6 +13,5 @@ export class LayoutComponent implements OnInit {
     
     ngOnInit() { 
         this.store.dispatch(new FetchTideLocations());
-        this.store.dispatch(new SetTidesLocation(environment.defaultLocation));
     }
 }

@@ -62,6 +62,7 @@ export class ViewLocationsComponent implements OnInit {
     
     changeLocation(locationId: string): void {
         this.store.dispatch(new SetTidesLocation(locationId));
+        this.dropdownPopoverShow = false;
     }
 
     applyFilter(arg: string) {
